@@ -25,8 +25,8 @@ const Products = () => {
   });
 
   if (error) {
-    console.error('Error loading products:', error);
-    return <div className="text-center text-red-500">Failed to load products</div>;
+    console.error('Erreur de chargement des produits:', error);
+    return <div className="text-center text-red-500">Échec du chargement des produits</div>;
   }
 
   return (
@@ -40,7 +40,6 @@ const Products = () => {
           <Carousel className="w-full">
             <CarouselContent>
               {isLoading ? (
-                // Loading skeleton
                 Array.from({ length: 6 }).map((_, index) => (
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
                     <div className="h-[400px] bg-gray-100 rounded-lg animate-pulse" />
@@ -55,13 +54,13 @@ const Products = () => {
               )}
             </CarouselContent>
             <CarouselPrevious
-              aria-label="Previous Slide"
+              aria-label="Produit précédent"
               className="absolute -left-2 top-1/2 transform -translate-y-1/2 bg-transparent border border-gray-200 shadow-lg h-8 w-8 rounded-full z-10"
             >
               <i className="bi bi-chevron-left h-5 w-5 text-red-600 hover:text-red-700"></i>
             </CarouselPrevious>
             <CarouselNext
-              aria-label="Next Slide"
+              aria-label="Produit suivant"
               className="absolute -right-2 top-1/2 transform -translate-y-1/2 bg-transparent border border-gray-200 shadow-lg h-8 w-8 rounded-full z-10"
             >
               <i className="bi bi-chevron-right h-5 w-5 text-red-600 hover:text-red-700"></i>

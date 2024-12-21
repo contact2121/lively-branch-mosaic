@@ -43,7 +43,7 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
     toast({
       title: "Produit ajouté au panier",
       description: `${quantity} x ${product.name} ajouté avec succès`,
-      duration: 5000, // 5 seconds
+      duration: 5000,
       className: "bg-red-50 border-red-200",
       style: {
         backgroundColor: '#700100',
@@ -61,7 +61,7 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
         <button
           onClick={onClose}
           className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors z-50"
-          aria-label="Close"
+          aria-label="Fermer"
         >
           <X className="h-5 w-5 text-gray-500" />
         </button>
@@ -72,6 +72,7 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
               src={product.image}
               alt={product.name}
               className="w-full h-full object-contain max-h-[500px] transition-transform duration-300 hover:scale-105"
+              loading="lazy"
             />
           </div>
 
@@ -84,7 +85,7 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
             </div>
 
             <div className="text-3xl font-bold text-[#471818]">
-              {product.price} €
+              {product.price} TND
             </div>
 
             <div className="space-y-4">
@@ -99,7 +100,7 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Status</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Statut</h3>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   product.status === 'En stock' 
                     ? 'bg-green-100 text-green-800'
