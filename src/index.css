@@ -46,39 +46,28 @@
   }
 
   .custom-cursor {
-    width: 20px;
-    height: 20px;
-    background: rgba(112, 1, 0, 0.3);
-    border: 2px solid #700100;
+    width: 12px;
+    height: 12px;
+    background: rgba(112, 1, 0, 0.15);
+    border: 1px solid #700100;
     border-radius: 50%;
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    transition: all 0.1s ease-out;
-    animation: cursorPulse 2s infinite;
+    transition: all 0.2s ease-out;
+    mix-blend-mode: difference;
   }
 
   .custom-cursor-follower {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     background: #700100;
     border-radius: 50%;
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    transition: all 0.15s ease-out;
-  }
-
-  @keyframes cursorPulse {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.3);
-    }
-    100% {
-      transform: scale(1);
-    }
+    transition: all 0.12s ease-out;
+    mix-blend-mode: difference;
   }
 
   /* Hover effect for clickable elements */
@@ -87,6 +76,7 @@
   [role="button"]:hover ~ .custom-cursor {
     transform: scale(1.5);
     background: rgba(112, 1, 0, 0.1);
-    border-color: #b40000;
+    border-color: #700100;
+    transition: all 0.3s ease-out;
   }
 }
