@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useCart } from '../components/cart/CartProvider';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import TopNavbar from '../components/TopNavbar';
 import { useToast } from "@/hooks/use-toast";
 import Footer from '@/components/Footer';
 import BrandNavbarSection from "@/components/productsPages/BrandNavbarSection";
 import { motion } from "framer-motion";
-import UserDetailsForm from '@/components/cart/UserDetailsForm';
-import OrderSummary from '@/components/cart/OrderSummary';
 import { UserDetails, getUserDetails } from '@/utils/userDetailsStorage';
-import CartItemCard from '@/components/cart/CartItemCard';
 import BackButton from '@/components/cart/BackButton';
 import EmptyCartMessage from '@/components/cart/EmptyCartMessage';
+
+// Lazy load components that might not be immediately needed
+const UserDetailsForm = React.lazy(() => import('@/components/cart/UserDetailsForm'));
+const OrderSummary = React.lazy(() => import('@/components/cart/OrderSummary'));
+const CartItemCard = React.lazy(() => import('@/components/cart/CartItemCard'));
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity } = useCart();
@@ -20,7 +23,11 @@ const CartPage = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(getUserDetails());
   const [isEditing, setIsEditing] = useState(false);
 
-  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Memoize calculations to improve performance
+  const total = React.useMemo(() => 
+    cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cartItems]
+  );
   const shipping = total > 500 ? 0 : 7;
   const finalTotal = total + shipping;
 
@@ -30,7 +37,6 @@ const CartPage = () => {
       toast({
         title: "Panier mis à jour",
         description: "La quantité a été mise à jour avec succès",
-        className: "bg-red-50 border-red-200",
         style: {
           backgroundColor: '#700100',
           color: 'white',
@@ -45,8 +51,6 @@ const CartPage = () => {
     toast({
       title: "Article supprimé",
       description: "L'article a été retiré du panier",
-      variant: "destructive",
-      className: "bg-red-50 border-red-200",
       style: {
         backgroundColor: '#700100',
         color: 'white',
@@ -55,17 +59,7 @@ const CartPage = () => {
     });
   };
 
-  const handleKonnektPayment = () => {
-    console.log('Processing Konnekt payment');
-  };
-
-  const handleCashPayment = () => {
-    console.log('Processing cash payment');
-  };
-
-  const handleEditDetails = () => {
-    setIsEditing(true);
-  };
+  const handleEditDetails = () => setIsEditing(true);
 
   const handleDeleteDetails = () => {
     localStorage.removeItem('userDetails');
@@ -73,7 +67,6 @@ const CartPage = () => {
     toast({
       title: "Informations supprimées",
       description: "Vos informations ont été supprimées avec succès",
-      className: "bg-red-50 border-red-200",
       style: {
         backgroundColor: '#700100',
         color: 'white',
@@ -89,6 +82,13 @@ const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F1F0FB]">
+      <Helmet>
+        <title>Mon Panier | Fiori - Vêtements Personnalisés</title>
+        <meta name="description" content="Gérez votre panier d'achats Fiori. Découvrez notre collection de vêtements personnalisés et haut de gamme en Tunisie." />
+        <meta name="robots" content="noindex, follow" />
+        <link rel="canonical" href="https://www.fiori.com/cart" />
+      </Helmet>
+
       <TopNavbar />
       <div className="flex-grow">
         <BrandNavbarSection />
@@ -108,51 +108,42 @@ const CartPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-6">
                 <div className="space-y-4 bg-white/50 p-6 rounded-xl backdrop-blur-sm shadow-sm">
-                  {cartItems.map((item) => (
-                    <CartItemCard
-                      key={item.id}
-                      item={{...item, price: item.price}}
-                      onUpdateQuantity={handleUpdateQuantity}
-                      onRemove={handleRemoveItem}
-                    />
-                  ))}
+                  <Suspense fallback={<div className="animate-pulse h-96 bg-gray-100 rounded-lg" />}>
+                    {cartItems.map((item) => (
+                      <CartItemCard
+                        key={item.id}
+                        item={{...item, price: item.price}}
+                        onUpdateQuantity={handleUpdateQuantity}
+                        onRemove={handleRemoveItem}
+                      />
+                    ))}
+                  </Suspense>
                 </div>
                 
                 {(!userDetails || isEditing) && (
                   <div className="bg-white/50 p-6 rounded-xl backdrop-blur-sm shadow-sm">
-                    <UserDetailsForm 
-                      onComplete={(details) => {
-                        setUserDetails(details);
-                        setIsEditing(false);
-                      }}
-                      initialData={userDetails}
-                    />
+                    <Suspense fallback={<div className="animate-pulse h-96 bg-gray-100 rounded-lg" />}>
+                      <UserDetailsForm 
+                        onComplete={handleFormComplete}
+                        initialData={userDetails}
+                      />
+                    </Suspense>
                   </div>
                 )}
               </div>
               
               <div className="lg:sticky lg:top-8">
-                <OrderSummary
-                  total={total}
-                  shipping={shipping}
-                  finalTotal={finalTotal}
-                  userDetails={userDetails}
-                  cartItems={cartItems}
-                  onEditDetails={!isEditing ? () => setIsEditing(true) : undefined}
-                  onDeleteDetails={!isEditing ? () => {
-                    localStorage.removeItem('userDetails');
-                    setUserDetails(null);
-                    toast({
-                      title: "Informations supprimées",
-                      description: "Vos informations ont été supprimées avec succès",
-                      style: {
-                        backgroundColor: '#700100',
-                        color: 'white',
-                        border: '1px solid #590000',
-                      },
-                    });
-                  } : undefined}
-                />
+                <Suspense fallback={<div className="animate-pulse h-96 bg-gray-100 rounded-lg" />}>
+                  <OrderSummary
+                    total={total}
+                    shipping={shipping}
+                    finalTotal={finalTotal}
+                    userDetails={userDetails}
+                    cartItems={cartItems}
+                    onEditDetails={!isEditing ? handleEditDetails : undefined}
+                    onDeleteDetails={!isEditing ? handleDeleteDetails : undefined}
+                  />
+                </Suspense>
               </div>
             </div>
           )}
