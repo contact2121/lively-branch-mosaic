@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./components/cart/CartProvider";
+import CustomCursor from "./components/CustomCursor";
 import Index from "./pages/Index";
 import CategoryPage from "./pages/CategoryPage";
 import CartPage from './pages/CartPage';
@@ -19,6 +20,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <CartProvider>
+        <CustomCursor />
         <Toaster />
         <Sonner />
         <BrowserRouter>
